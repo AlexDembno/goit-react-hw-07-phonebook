@@ -1,12 +1,13 @@
 import ContactElement from 'components/ContactElement/ContactElement';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/contactsSlice/contacts-slice';
-
+import { fetchDeleteContacts } from 'redux/contactsSlice/contactOperations';
+import { selectContacts } from 'redux/contactsSlice/contacts-selectors';
+import { selectFilter } from 'redux/filterSlise/filter-selectors';
 import style from './Contacts.module.css';
 
 function Contacts() {
-  const contacts = useSelector(store => store.contacts);
-  const filter = useSelector(store => store.filter);
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
 
   const dispatch = useDispatch();
 
@@ -14,8 +15,8 @@ function Contacts() {
     if (!filter) {
       return contacts;
     }
-    const result = contacts.filter(contacts =>
-      contacts.name.toLowerCase().includes(filter.toLowerCase())
+    const result = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
     );
     return result;
   };
@@ -23,8 +24,7 @@ function Contacts() {
   const filterName = findName();
 
   const deleteNumber = contactId => {
-    const action = deleteContact(contactId);
-    dispatch(action);
+    dispatch(fetchDeleteContacts(contactId));
   };
 
   return (

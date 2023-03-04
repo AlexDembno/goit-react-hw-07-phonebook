@@ -1,6 +1,12 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactsSlice/contacts-slice';
+import {
+  fetchAllContacts,
+  fetchAddContacts,
+} from 'redux/contactsSlice/contactOperations';
+
+import { selectContacts } from 'redux/contactsSlice/contacts-selectors';
 
 import style from './FormAddContacts.module.css';
 
@@ -8,8 +14,12 @@ function FormAddContacts() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const contacts = useSelector(store => store.contacts);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAllContacts());
+  }, [dispatch]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -34,8 +44,7 @@ function FormAddContacts() {
     if (findDublicate(name, number)) {
       return alert(`${name} is already in contacts`);
     }
-    const action = addContact({ name, number });
-    dispatch(action);
+    dispatch(fetchAddContacts({ name, number }));
   };
 
   const handleChangeInput = e => {
